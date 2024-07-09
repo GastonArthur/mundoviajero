@@ -8,11 +8,8 @@
           "src": "/(.*)",
           "dest": "/"
         }
-    ]
-  }
-    { 
-        "rewrites": 
-        [
+    ],
+    "rewrites": [
             { "source": "/(.*)", "destination": "/" }
         ] 
     }
