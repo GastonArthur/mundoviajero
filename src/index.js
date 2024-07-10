@@ -101,6 +101,21 @@ app.delete('/destinos/:id', async (req, res) => {
     try {
         const connection = await database.getConnection();
 
+        // Primero, eliminar las actividades asociadas
+        const deleteActividadesQuery = `
+            DELETE FROM actividades
+            WHERE id_destino = ?
+        `;
+        await connection.query(deleteActividadesQuery, [destinoId]);
+
+        // Despues, eliminar las entradas en destinos_internacionales asociadas
+        const deleteDestinosInternacionalesQuery = `
+            DELETE FROM destinos_internacionales
+            WHERE id_destino = ?
+        `;
+        await connection.query(deleteDestinosInternacionalesQuery, [destinoId]);
+
+        // Ultimo, eliminar destino
         const deleteDestinoQuery = `
             DELETE FROM destinos
             WHERE id_destino = ?
