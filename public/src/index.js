@@ -15,10 +15,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Sirve archivos estáticos desde la carpeta 'public'
 
 // Rutas
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
-});
-
 app.get('/destinos', async (req, res) => {
     const connection = await database.getConnection();
     const result = await connection.query("SELECT * FROM destinos");
