@@ -6,8 +6,6 @@ const port = process.env.PORT || 4000;
 
 // Config inicial
 const app = express();
-app.listen(app.get('port'));
-console.log('Servidor web online en puerto 4000');
 
 // Middlewares
 app.use(morgan('dev'));
@@ -119,4 +117,7 @@ app.delete('/destinos/:id', async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
+app.listen(port, () => {
+  console.log(`puerto corriendo en puerto: ${port}`)
 
