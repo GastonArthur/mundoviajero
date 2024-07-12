@@ -2,10 +2,10 @@ const express = require('express');
 const morgan = require('morgan');
 const database = require("./database");
 const path = require('path');
+const port = process.env.PORT || 4000;
 
 // Config inicial
 const app = express();
-app.set('port', 4000);
 app.listen(app.get('port'));
 console.log('Servidor web online en puerto 4000');
 
