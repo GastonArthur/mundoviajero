@@ -1,24 +1,29 @@
 const express = require('express');
 const morgan = require('morgan');
 const database = require("./database");
+const path = require('path');
 
-//Config inicial
+// Config inicial
 const app = express();
-app.set('port',4000);
+app.set('port', 4000);
 app.listen(app.get('port'));
-console.log('Servidor web online en puerto ${port)');
+console.log('Servidor web online en puerto 4000');
 
-//Middlewares
-app.use(morgan('dev'))
+// Middlewares
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Sirve archivos estáticos desde la carpeta 'public'
 
-//Rutas
+// Rutas
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
 app.get('/destinos', async (req, res) => {
     const connection = await database.getConnection();
-    const result = await connection.query("SELECT * FROM destinos")
-    res.json(result)
-})
-
+    const result = await connection.query("SELECT * FROM destinos");
+    res.json(result);
+});
 
 // Ruta GET /destinos/:id para obtener un destino por ID
 app.get('/destinos/:id', async (req, res) => {
@@ -62,7 +67,6 @@ app.put('/destinos/:id', async (req, res) => {
         
         const result = await connection.query(updateQuery, [nombre, pais, descripcion, precio, id]);
 
-
         if (result.affectedRows > 0) {
             res.json({ message: 'Destino actualizado correctamente' });
         } else {
@@ -74,12 +78,13 @@ app.put('/destinos/:id', async (req, res) => {
     }
 });
 
+// Ruta POST /destinos para agregar un nuevo destino
 app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
         
-        // Consulta para insertar un nuevo destino
+        // Consulta para agregar el nuevo destino
         const insertQuery = `
             INSERT INTO destinos (nombre, pais, descripcion, precio)
             VALUES (?, ?, ?, ?)
@@ -87,8 +92,7 @@ app.post('/destinos', async (req, res) => {
         
         const result = await connection.query(insertQuery, [nombre, pais, descripcion, precio]);
 
-        // Devolver el ID del nuevo destino creado
-        res.json({ id_destino: result.insertId, message: 'Destino agregado correctamente' });
+        res.json({ message: 'Destino agregado correctamente' });
     } catch (error) {
         console.error('Error al agregar destino:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
@@ -97,38 +101,26 @@ app.post('/destinos', async (req, res) => {
 
 // Ruta DELETE /destinos/:id para eliminar un destino por ID
 app.delete('/destinos/:id', async (req, res) => {
-    const destinoId = req.params.id;
+    const { id } = req.params;
     try {
         const connection = await database.getConnection();
-
-        // Primero, eliminar las actividades asociadas
-        const deleteActividadesQuery = `
-            DELETE FROM actividades
-            WHERE id_destino = ?
-        `;
-        await connection.query(deleteActividadesQuery, [destinoId]);
-
-        // Despues, eliminar las entradas en destinos_internacionales asociadas
-        const deleteDestinosInternacionalesQuery = `
-            DELETE FROM destinos_internacionales
-            WHERE id_destino = ?
-        `;
-        await connection.query(deleteDestinosInternacionalesQuery, [destinoId]);
-
-        // Ultimo, eliminar destino
-        const deleteDestinoQuery = `
+        
+        // Consulta para eliminar el destino por su ID
+        const deleteQuery = `
             DELETE FROM destinos
             WHERE id_destino = ?
         `;
-        const deleteResult = await connection.query(deleteDestinoQuery, [destinoId]);
+        
+        const result = await connection.query(deleteQuery, [id]);
 
-        if (deleteResult.affectedRows > 0) {
-            res.json({ message: `Destino con ID ${destinoId} eliminado correctamente` });
+        if (result.affectedRows > 0) {
+            res.json({ message: 'Destino eliminado correctamente' });
         } else {
-            res.status(404).json({ error: `Destino con ID ${destinoId} no encontrado` });
+            res.status(404).json({ error: 'Destino no encontrado' });
         }
     } catch (error) {
         console.error('Error al eliminar destino:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
