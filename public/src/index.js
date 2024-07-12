@@ -119,5 +119,5 @@ app.delete('/destinos/:id', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`puerto corriendo en puerto: ${port}`)
-
+console.log(`puerto corriendo en puerto: ${port}`)
+})
