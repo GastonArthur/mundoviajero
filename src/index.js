@@ -76,7 +76,7 @@ app.get('/admin', verificarToken, (req, res) => {
 // Rutas para manejar destinos
 app.get('/destinos', async (req, res) => {
 try {
-    const connection = await database.getConnection();
+    const connection = await pool.getConnection();
     const result = await connection.query("SELECT * FROM destinos");
     res.json(result);
 } catch (error) {
@@ -89,7 +89,7 @@ try {
 app.get('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const connection = await database.getConnection();
+        const connection = await pool.getConnection();
         
         const query = `
             SELECT id_destino, nombre, pais, descripcion, precio
@@ -115,7 +115,7 @@ app.put('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, pais, descripcion, precio } = req.body;
     try {
-        const connection = await database.getConnection();
+        const connection = await pool.getConnection();
         
         const updateQuery = `
             UPDATE destinos
@@ -140,7 +140,7 @@ app.put('/destinos/:id', async (req, res) => {
 app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
-        const connection = await database.getConnection();
+        const connection = await pool.getConnection();
         
         const insertQuery = `
             INSERT INTO destinos (nombre, pais, descripcion, precio)
@@ -160,7 +160,7 @@ app.post('/destinos', async (req, res) => {
 app.delete('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        const connection = await database.getConnection();
+        const connection = await pool.getConnection();
 
         // Eliminar actividades asociadas
         await connection.query(`DELETE FROM actividades WHERE id_destino = ?`, [id]);
