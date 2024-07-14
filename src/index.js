@@ -4,7 +4,7 @@ const path = require('path');
 const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
 const database = require("./database");
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3306;
 const cors = require('cors'); 
 
 // Config inicial
