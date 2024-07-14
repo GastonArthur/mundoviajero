@@ -61,7 +61,7 @@ app.post('/login', (req, res) => {
 
 // Ruta para acceder al archivo login.html
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'login.html'));
+    res.sendFile(path.join(__dirname, '..', 'public','login.html'));
 });
 
 // Ruta para acceder al archivo admin.html
