@@ -5,11 +5,13 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
 const database = require("./database");
 const port = process.env.PORT || 4000;
+const cors = require('cors'); 
 
 // Config inicial
 const app = express();
 
 // Middlewares
+app.use(cors()); // 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
