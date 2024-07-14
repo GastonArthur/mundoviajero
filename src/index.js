@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '..', 'public'))); // Servir archivos estáticos
 
-const secretKey = process.env.SECRET_KEY || 'codoacodo'; // Cambia esto por tu clave secreta
+const secretKey = process.env.SECRET_KEY || 'codoacodo'; // 
 
 // Middleware para verificar el token
 function verificarToken(req, res, next) {
