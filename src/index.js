@@ -67,7 +67,7 @@ app.get('/login', (req, res) => {
 // Ruta para acceder al archivo admin.html
 app.get('/admin', verificarToken, (req, res) => {
     if (req.user.role === "admin") {
-        const filePath = path.join(__dirname, '..', 'admin.html'); 
+        const filePath = path.join(__dirname, '..','public','admin.html'); 
         return res.sendFile(filePath);
     }
     res.sendStatus(403); // Prohibido
