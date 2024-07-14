@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public'))); // Servir archivos estáticos
+app.use(express.static(path.join(__dirname, '..', 'public'))); // Servir archivos estáticos
 
 const secretKey = process.env.SECRET_KEY || 'codoacodo'; // 
 
