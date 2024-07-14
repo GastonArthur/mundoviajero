@@ -4,14 +4,14 @@ dotenv.config();
 
 const connection = mysql.createConnection({
     host: process.env.host,
-    port: process.env.port || 3308,
-    database: process.env.database,
-    user: process.env.user,
-    password: process.env.password 
-});
+    database:process.env.database,
+    user:process.env.user,
+    password:process.env.password,
 
-const getConnection = async () => await connection;
+})
+
+const getConnection = async ()=> await connection;
 
 module.exports = {
     getConnection
-};
+}
