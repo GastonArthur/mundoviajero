@@ -1,31 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/index.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/login",
-      "dest": "src/index.js"
-    },
-    {
-      "src": "/admin",
-      "dest": "src/index.js"
-    },
-    {
-      "src": "/destinos",
-      "dest": "src/index.js"
-    },
-    {
-      "src": "/destinos/.*",
-      "dest": "src/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "src/index.js"
-    }
-  ]
+  "rewrites": [{
+    "source": "/src/(.*)", "destination": "/src/index.js"
+  }]
 }
