@@ -75,9 +75,14 @@ app.get('/admin', verificarToken, (req, res) => {
 
 // Rutas para manejar destinos
 app.get('/destinos', async (req, res) => {
+try {
     const connection = await database.getConnection();
     const result = await connection.query("SELECT * FROM destinos");
     res.json(result);
+} catch (error) {
+    console.error('Error al obtener destinos:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+}
 });
 
 // Ruta GET /destinos/:id para obtener un destino por ID
