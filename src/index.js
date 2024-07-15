@@ -1,3 +1,4 @@
+// index.js
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
@@ -85,6 +86,7 @@ app.get('/destinos', async (req, res) => {
     }
 });
 
+// Ruta GET /destinos/:id para obtener un destino por ID
 app.get('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -103,6 +105,7 @@ app.get('/destinos/:id', async (req, res) => {
     }
 });
 
+// Ruta PUT /destinos/:id para actualizar un destino por ID
 app.put('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, pais, descripcion, precio } = req.body;
@@ -122,6 +125,7 @@ app.put('/destinos/:id', async (req, res) => {
     }
 });
 
+// Ruta POST /destinos para agregar un nuevo destino
 app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
@@ -135,6 +139,7 @@ app.post('/destinos', async (req, res) => {
     }
 });
 
+// Ruta DELETE /destinos/:id para eliminar un destino por ID
 app.delete('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
