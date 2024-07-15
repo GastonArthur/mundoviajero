@@ -7,11 +7,6 @@
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -26,6 +21,10 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `actividades`
 --
+
+CREATE database mundoviajero;
+
+USE mundoviajero;
 
 CREATE TABLE `actividades` (
   `id_actividad` int(11) NOT NULL,
