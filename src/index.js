@@ -77,7 +77,7 @@ app.get('/admin', verificarToken, (req, res) => {
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
-        const [results] = await connection.query("SELECT * FROM destinos");
+        const [results] = await connection.query("SELECT * FROM destinos;");
         connection.release();
         res.json(results);
     } catch (error) {
