@@ -11,14 +11,14 @@ const cors = require('cors');
 const app = express();
 
 // Middlewares
-app.use(cors()); // 
+app.use(cors()); 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '..', 'public'))); // Servir archivos estáticos
+app.use(express.static(path.join(__dirname, '..', 'public'))); 
 
-const secretKey = process.env.SECRET_KEY || 'codoacodo'; // 
+const secretKey = process.env.SECRET_KEY || 'codoacodo'; 
 
 // Middleware para verificar el token
 function verificarToken(req, res, next) {
@@ -44,16 +44,15 @@ app.post('/login', (req, res) => {
     if (username === "admin" && password === "password") {
         const token = jwt.sign({ username, role: 'admin' }, secretKey, { expiresIn: "5m" });
 
-        // Configurar la cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false, // Cambia a true en producción
-            maxAge: 5 * 60 * 1000 // 5 minutos
+            secure: false, 
+            maxAge: 5 * 60 * 1000 
         });
 
         return res.json({ 
             message: 'Login exitoso', 
-            token // Devolver el token
+            token 
         });
     }
     res.status(401).send('Credenciales inválidas');
@@ -70,35 +69,37 @@ app.get('/admin', verificarToken, (req, res) => {
         const filePath = path.join(__dirname, '..','public','admin.html'); 
         return res.sendFile(filePath);
     }
-    res.sendStatus(403); // Prohibido
+    res.sendStatus(403); 
 });
 
 // Rutas para manejar destinos
 app.get('/destinos', async (req, res) => {
-try {
     const connection = await database.getConnection();
     const result = await connection.query("SELECT * FROM destinos");
-    res.json(result);
-} catch (error) {
-    console.error('Error al obtener destinos:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-}
+    connection.release();
+
+    try {
+        res.json(result);
+    } catch (error) {
+        console.error('Error al obtener destinos:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 });
 
 // Ruta GET /destinos/:id para obtener un destino por ID
 app.get('/destinos/:id', async (req, res) => {
     const { id } = req.params;
-    try {
-        const connection = await database.getConnection();
-        
-        const query = `
-            SELECT id_destino, nombre, pais, descripcion, precio
-            FROM destinos
-            WHERE id_destino = ?
-        `;
-        
-        const result = await connection.query(query, [id]);
+    const connection = await database.getConnection();
+    const query = `
+        SELECT id_destino, nombre, pais, descripcion, precio
+        FROM destinos
+        WHERE id_destino = ?
+    `;
 
+    const result = await connection.query(query, [id]);
+    connection.release();
+
+    try {
         if (result.length > 0) {
             res.json(result[0]);
         } else {
@@ -114,17 +115,17 @@ app.get('/destinos/:id', async (req, res) => {
 app.put('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, pais, descripcion, precio } = req.body;
-    try {
-        const connection = await database.getConnection();
-        
-        const updateQuery = `
-            UPDATE destinos
-            SET nombre = ?, pais = ?, descripcion = ?, precio = ?
-            WHERE id_destino = ?
-        `;
-        
-        const result = await connection.query(updateQuery, [nombre, pais, descripcion, precio, id]);
+    const connection = await database.getConnection();
+    const updateQuery = `
+        UPDATE destinos
+        SET nombre = ?, pais = ?, descripcion = ?, precio = ?
+        WHERE id_destino = ?
+    `;
 
+    const result = await connection.query(updateQuery, [nombre, pais, descripcion, precio, id]);
+    connection.release();
+
+    try {
         if (result.affectedRows > 0) {
             res.json({ message: 'Destino actualizado correctamente' });
         } else {
@@ -139,16 +140,16 @@ app.put('/destinos/:id', async (req, res) => {
 // Ruta POST /destinos para agregar un nuevo destino
 app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
-    try {
-        const connection = await database.getConnection();
-        
-        const insertQuery = `
-            INSERT INTO destinos (nombre, pais, descripcion, precio)
-            VALUES (?, ?, ?, ?)
-        `;
-        
-        const result = await connection.query(insertQuery, [nombre, pais, descripcion, precio]);
+    const connection = await database.getConnection();
+    const insertQuery = `
+        INSERT INTO destinos (nombre, pais, descripcion, precio)
+        VALUES (?, ?, ?, ?)
+    `;
 
+    const result = await connection.query(insertQuery, [nombre, pais, descripcion, precio]);
+    connection.release();
+
+    try {
         res.json({ message: 'Destino agregado correctamente' });
     } catch (error) {
         console.error('Error al agregar destino:', error);
@@ -159,27 +160,21 @@ app.post('/destinos', async (req, res) => {
 // Ruta DELETE /destinos/:id para eliminar un destino por ID
 app.delete('/destinos/:id', async (req, res) => {
     const { id } = req.params;
+    const connection = await database.getConnection();
+    
+    await connection.query(`DELETE FROM actividades WHERE id_destino = ?`, [id]);
+    await connection.query(`DELETE FROM destinos_nacionales WHERE id_destino = ?`, [id]);
+    await connection.query(`DELETE FROM destinos_internacionales WHERE id_destino = ?`, [id]);
+
+    const deleteQuery = `
+        DELETE FROM destinos
+        WHERE id_destino = ?
+    `;
+    
+    const result = await connection.query(deleteQuery, [id]);
+    connection.release();
+
     try {
-        const connection = await database.getConnection();
-
-        // Eliminar actividades asociadas
-        await connection.query(`DELETE FROM actividades WHERE id_destino = ?`, [id]);
-
-        // Eliminar destinos_nacionales asociados
-        await connection.query(`DELETE FROM destinos_nacionales WHERE id_destino = ?`, [id]);
-
-
-        // Eliminar destinos_internacionales asociados
-        await connection.query(`DELETE FROM destinos_internacionales WHERE id_destino = ?`, [id]);
-
-        // Ahora eliminar el destino
-        const deleteQuery = `
-            DELETE FROM destinos
-            WHERE id_destino = ?
-        `;
-        
-        const result = await connection.query(deleteQuery, [id]);
-
         if (result.affectedRows > 0) {
             res.json({ message: 'Destino eliminado correctamente' });
         } else {
@@ -190,8 +185,6 @@ app.delete('/destinos/:id', async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
-
-
 
 // Iniciar el servidor
 app.listen(port, () => {
