@@ -77,9 +77,9 @@ app.get('/admin', verificarToken, (req, res) => {
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
-        const [results] = await connection.query("SELECT * FROM destinos;");
+        const [result] = await connection.query("SELECT * FROM destinos;");
         connection.release();
-        res.json(results);
+        res.json(result);
     } catch (error) {
         console.error('Error al obtener destinos:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
@@ -91,11 +91,11 @@ app.get('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await database.getConnection();
-        const [results] = await connection.query("SELECT * FROM destinos WHERE id_destino = ?", [id]);
+        const [result] = await connection.query("SELECT * FROM destinos WHERE id_destino = ?", [id]);
         connection.release();
 
-        if (results.length > 0) {
-            res.json(results[0]);
+        if (result.length > 0) {
+            res.json(result[0]);
         } else {
             res.status(404).json({ error: 'Destino no encontrado' });
         }
