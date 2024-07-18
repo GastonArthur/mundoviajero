@@ -7,7 +7,7 @@ const database = require('./database');
 const port = process.env.PORT || 3000;
 const cors = require('cors');
 
-// Config inicial
+// Configuración inicial
 const app = express();
 
 // Middlewares
@@ -72,11 +72,11 @@ app.get('/admin', verificarToken, (req, res) => {
     res.sendStatus(403);
 });
 
-// Ejemplo de uso en una ruta
+// Ruta GET /destinos para obtener todos los destinos
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query("SELECT * FROM destinos");
+        const [result] = await connection.execute("SELECT * FROM destinos");
         connection.release();
         res.json(result);
     } catch (error) {
@@ -85,13 +85,12 @@ app.get('/destinos', async (req, res) => {
     }
 });
 
-
 // Ruta GET /destinos/:id para obtener un destino por ID
 app.get('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query("SELECT * FROM destinos WHERE id_destino = ?", [id]);
+        const [result] = await connection.execute("SELECT * FROM destinos WHERE id_destino = ?", [id]);
         connection.release();
 
         if (result.length > 0) {
@@ -111,7 +110,7 @@ app.put('/destinos/:id', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query(
+        const [result] = await connection.execute(
             "UPDATE destinos SET nombre = ?, pais = ?, descripcion = ?, precio = ? WHERE id_destino = ?",
             [nombre, pais, descripcion, precio, id]
         );
@@ -133,7 +132,7 @@ app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query(
+        const [result] = await connection.execute(
             "INSERT INTO destinos (nombre, pais, descripcion, precio) VALUES (?, ?, ?, ?)",
             [nombre, pais, descripcion, precio]
         );
@@ -150,10 +149,10 @@ app.delete('/destinos/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await database.getConnection();
-        await connection.query("DELETE FROM actividades WHERE id_destino = ?", [id]);
-        await connection.query("DELETE FROM destinos_nacionales WHERE id_destino = ?", [id]);
-        await connection.query("DELETE FROM destinos_internacionales WHERE id_destino = ?", [id]);
-        const [result] = await connection.query("DELETE FROM destinos WHERE id_destino = ?", [id]);
+        await connection.execute("DELETE FROM actividades WHERE id_destino = ?", [id]);
+        await connection.execute("DELETE FROM destinos_nacionales WHERE id_destino = ?", [id]);
+        await connection.execute("DELETE FROM destinos_internacionales WHERE id_destino = ?", [id]);
+        const [result] = await connection.execute("DELETE FROM destinos WHERE id_destino = ?", [id]);
         connection.release();
 
         if (result.affectedRows > 0) {
