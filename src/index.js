@@ -3,8 +3,8 @@ const morgan = require('morgan');
 const path = require('path');
 const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
-const database = require("./database");
-const port = process.env.PORT || 3000; // Corregido para usar PORT en lugar de MYSQL_PORT
+const database = require('./database');
+const port = process.env.PORT || 3000;
 const cors = require('cors');
 
 // Config inicial
@@ -72,7 +72,8 @@ app.get('/admin', verificarToken, (req, res) => {
     res.sendStatus(403);
 });
 
-// Rutas para manejar destinos
+// Ejemplo de uso en una ruta
+const database = require('./database');
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
@@ -84,6 +85,7 @@ app.get('/destinos', async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
+
 
 // Ruta GET /destinos/:id para obtener un destino por ID
 app.get('/destinos/:id', async (req, res) => {
@@ -110,7 +112,10 @@ app.put('/destinos/:id', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query("UPDATE destinos SET nombre = ?, pais = ?, descripcion = ?, precio = ? WHERE id_destino = ?", [nombre, pais, descripcion, precio, id]);
+        const [result] = await connection.query(
+            "UPDATE destinos SET nombre = ?, pais = ?, descripcion = ?, precio = ? WHERE id_destino = ?",
+            [nombre, pais, descripcion, precio, id]
+        );
         connection.release();
 
         if (result.affectedRows > 0) {
@@ -129,7 +134,10 @@ app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query("INSERT INTO destinos (nombre, pais, descripcion, precio) VALUES (?, ?, ?, ?)", [nombre, pais, descripcion, precio]);
+        const [result] = await connection.query(
+            "INSERT INTO destinos (nombre, pais, descripcion, precio) VALUES (?, ?, ?, ?)",
+            [nombre, pais, descripcion, precio]
+        );
         connection.release();
         res.json({ message: 'Destino agregado correctamente' });
     } catch (error) {
