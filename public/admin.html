@@ -28,20 +28,30 @@
 
         // Función para cargar destinos
         async function loadDestinos() {
-            const response = await fetch('/productos');
-            const destinos = await response.json();
-            destinosList.innerHTML = '';
-
-            destinos.forEach(destino => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    ${destino.nombre} (${destino.pais}) 
-                    <button onclick="editDestino(${destino.id_destino})">Editar</button>
-                    <button onclick="deleteDestino(${destino.id_destino})">Eliminar</button>
-                `;
-                destinosList.appendChild(li);
-            });
+    try {
+        const response = await fetch('/productos');
+        if (!response.ok) {
+            throw new Error('Error al cargar destinos');
         }
+        const destinos = await response.json();
+        destinosList.innerHTML = '';
+
+        destinos.forEach(destino => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                ${destino.nombre} (${destino.pais}) 
+                <button onclick="editDestino(${destino.id_destino})">Editar</button>
+                <button onclick="deleteDestino(${destino.id_destino})">Eliminar</button>
+            `;
+            destinosList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error al cargar destinos:', error);
+        // Manejar el error, por ejemplo, mostrar un mensaje en el DOM
+        messageDiv.innerText = 'Error al cargar destinos';
+    }
+}
+
 
         // Función para editar un destino
         function editDestino(id) {

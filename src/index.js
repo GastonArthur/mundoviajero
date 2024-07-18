@@ -144,6 +144,7 @@ app.post('/productos', async (req, res) => {
     }
 });
 
+
 // Ruta DELETE /destinos/:id para eliminar un destino por ID
 app.delete('/productos/:id', async (req, res) => {
     const { id } = req.params;
