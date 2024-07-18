@@ -73,7 +73,7 @@ app.get('/admin', verificarToken, (req, res) => {
 });
 
 // Ruta GET /destinos para obtener todos los destinos
-app.get('/destinos', async (req, res) => {
+app.get('/productos', async (req, res) => {
     try {
         const connection = await database.getConnection();
         const [result] = await connection.execute("SELECT * FROM destinos");
@@ -86,7 +86,7 @@ app.get('/destinos', async (req, res) => {
 });
 
 // Ruta GET /destinos/:id para obtener un destino por ID
-app.get('/destinos/:id', async (req, res) => {
+app.get('/productos/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await database.getConnection();
@@ -105,7 +105,7 @@ app.get('/destinos/:id', async (req, res) => {
 });
 
 // Ruta PUT /destinos/:id para actualizar un destino por ID
-app.put('/destinos/:id', async (req, res) => {
+app.put('/productos/:id', async (req, res) => {
     const { id } = req.params;
     const { nombre, pais, descripcion, precio } = req.body;
     try {
@@ -128,7 +128,7 @@ app.put('/destinos/:id', async (req, res) => {
 });
 
 // Ruta POST /destinos para agregar un nuevo destino
-app.post('/destinos', async (req, res) => {
+app.post('/productos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
@@ -145,7 +145,7 @@ app.post('/destinos', async (req, res) => {
 });
 
 // Ruta DELETE /destinos/:id para eliminar un destino por ID
-app.delete('/destinos/:id', async (req, res) => {
+app.delete('/productos:id', async (req, res) => {
     const { id } = req.params;
     try {
         const connection = await database.getConnection();
