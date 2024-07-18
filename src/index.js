@@ -73,7 +73,6 @@ app.get('/admin', verificarToken, (req, res) => {
 });
 
 // Ejemplo de uso en una ruta
-const database = require('./database');
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
