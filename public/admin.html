@@ -28,7 +28,7 @@
 
         // Función para cargar destinos
         async function loadDestinos() {
-            const response = await fetch('/destinos');
+            const response = await fetch('/productos');
             const destinos = await response.json();
             destinosList.innerHTML = '';
 
@@ -45,7 +45,7 @@
 
         // Función para editar un destino
         function editDestino(id) {
-            fetch(`/destinos/${id}`)
+            fetch(`/productos/${id}`)
                 .then(response => response.json())
                 .then(destino => {
                     document.getElementById('id_destino').value = destino.id_destino;
@@ -58,7 +58,7 @@
 
         // Función para eliminar un destino
         async function deleteDestino(id) {
-            const response = await fetch(`/destinos/${id}`, {
+            const response = await fetch(`/productos/${id}`, {
                 method: 'DELETE'
             });
 
@@ -80,7 +80,7 @@
             const precio = document.getElementById('precio').value;
 
             const method = id ? 'PUT' : 'POST';
-            const url = id ? `/destinos/${id}` : '/destinos';
+            const url = id ? `/productos/${id}` : '/productos';
 
             const response = await fetch(url, {
                 method: method,
