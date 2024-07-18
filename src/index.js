@@ -1,11 +1,10 @@
-// index.js
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const jwt = require("jsonwebtoken");
 const cookieParser = require('cookie-parser');
 const database = require("./database");
-const port = process.env.MYSQL_PORT || 3000;
+const port = process.env.PORT || 3000; // Corregido para usar PORT en lugar de MYSQL_PORT
 const cors = require('cors');
 
 // Config inicial
@@ -77,7 +76,7 @@ app.get('/admin', verificarToken, (req, res) => {
 app.get('/destinos', async (req, res) => {
     try {
         const connection = await database.getConnection();
-        const [result] = await connection.query("SELECT * FROM destinos;");
+        const [result] = await connection.query("SELECT * FROM destinos");
         connection.release();
         res.json(result);
     } catch (error) {
@@ -126,7 +125,7 @@ app.put('/destinos/:id', async (req, res) => {
 });
 
 // Ruta POST /destinos para agregar un nuevo destino
-app.post('/destinos/p', async (req, res) => {
+app.post('/destinos', async (req, res) => {
     const { nombre, pais, descripcion, precio } = req.body;
     try {
         const connection = await database.getConnection();
@@ -159,6 +158,17 @@ app.delete('/destinos/:id', async (req, res) => {
         console.error('Error al eliminar destino:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
+});
+
+// Manejo de errores 404
+app.use((req, res, next) => {
+    res.status(404).send('Recurso no encontrado');
+});
+
+// Manejo de errores generales
+app.use((err, req, res, next) => {
+    console.error('Error en la aplicación:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
 });
 
 // Iniciar el servidor
